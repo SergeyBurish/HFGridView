@@ -32,17 +32,28 @@ public class MainActivity extends Activity {
 
 		@Override
 		public View getView(int i, View view, ViewGroup viewGroup) {
-			ImageView imageView;
-			if (view == null) {
-				imageView = new ImageView(MainActivity.this);
-				imageView.setLayoutParams(new LinearLayout.LayoutParams(gridCellSize, gridCellSize));
-				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-			} else {
-				imageView = (ImageView) view;
-			}
+			if (i%3 != 0) { // create view in code
+				ImageView imageView;
+				if (view == null) {
+					imageView = new ImageView(MainActivity.this);
+					imageView.setLayoutParams(new LinearLayout.LayoutParams(gridCellSize, gridCellSize));
+					imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+				} else {
+					imageView = (ImageView) view;
+				}
 
-			imageView.setImageResource(R.drawable.icon);
-			return imageView;
+				imageView.setImageResource(R.drawable.icon);
+				return imageView;
+			}
+			else { // from resources
+				View resView;
+				if (view == null) {
+					resView = getLayoutInflater().inflate(R.layout.griditem, viewGroup, false);
+				} else {
+					resView = view;
+				}
+				return resView;
+			}
 		}
 	};
 
