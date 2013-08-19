@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public View getView(int i, View view, ViewGroup viewGroup) {
-			if (i%3 != 0) { // create view in code
+			if (i%3 == 0) { // create view in code
 				ImageView imageView;
 				if (view == null) {
 					imageView = new ImageView(MainActivity.this);
@@ -64,6 +64,7 @@ public class MainActivity extends Activity {
 
 		gridView = (HFGridView) findViewById(R.id.gridView);
 		gridView.setColumnWidth(gridCellSize);
+		gridView.setNumColumns(HFGridView.AUTO_FIT);
 
 		View header1 = getHeader("Header 1 text");
 		View header2 = getHeader("Header 2 text");

@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 /**
  * Created with IntelliJ IDEA.
+ * Idea, help: Dmitry Skorbovenko
  * User: sergey.burish
  * Date: 10.07.13
  * Time: 11:26
@@ -16,12 +17,20 @@ import android.widget.ListView;
 public class HFGridView extends ListView {
 	final static String LOG_TAG = "HFGridView";
 
-	public int getNumColumns() {
-		if (hfGridViewAdapter != null) {
-			return hfGridViewAdapter.getNumColumns();
-		}
-		return -1;
-	}
+	public static final int AUTO_FIT = -1;
+	public static final int NOT_SET = -1;
+
+//	public static final int NO_STRETCH = 0;
+//	public static final int STRETCH_SPACING = 1;
+//	public static final int STRETCH_COLUMN_WIDTH = 2;
+	public static final int STRETCH_SPACING_UNIFORM = 3;
+	public static final int STRETCH_SPACING_UNIFORM_VERT_HOR = 4;
+
+	private int numColumns = 1;
+	private int columnWidth = NOT_SET;
+	private int horizontalSpacing = NOT_SET;
+	private int verticalSpacing = NOT_SET;
+	private int stretchMode = STRETCH_SPACING_UNIFORM_VERT_HOR;
 
 	public interface HFGridViewListener {
 		void readyToDisposeItems(); // should be called only once in the first onMeasure() call
@@ -32,7 +41,6 @@ public class HFGridView extends ListView {
 	HFGridViewAdapter hfGridViewAdapter = null;
 
 	private int viewWidth = 0;
-	private int columnWidth = 0;
 	private boolean readyToDisposeItems = false;
 
 	// ListView
@@ -72,15 +80,107 @@ public class HFGridView extends ListView {
 	@Override // ListView
 	public void setAdapter(ListAdapter adapter) {
 		hfGridViewAdapter = new HFGridViewAdapter(context, adapter, viewWidth);
+
 		hfGridViewAdapter.setColumnWidth(columnWidth);
+		hfGridViewAdapter.setNumColumns(numColumns);
+		hfGridViewAdapter.setHorizontalSpacing(horizontalSpacing);
+		hfGridViewAdapter.setVerticalSpacing(verticalSpacing);
+		hfGridViewAdapter.setStretchMode(stretchMode);
+
+		hfGridViewAdapter.recalculate();
 
 		super.setAdapter(hfGridViewAdapter);
 	}
 
-	// extended STRETCH_SPACING_UNIFORM is implemented only (with equal vertical and horizontal spacing),
-	// so only setColumnWidth is needed (no setNumColumns, setVerticalSpacing, setHorizontalSpacing, setStretchMode)
 	public  void setColumnWidth(int columnWidth) {
-		this.columnWidth = columnWidth;
-		if (hfGridViewAdapter != null) hfGridViewAdapter.setColumnWidth(columnWidth);
+		if (columnWidth > 0) {
+			this.columnWidth = columnWidth;
+			if (hfGridViewAdapter != null) {
+				hfGridViewAdapter.setColumnWidth(columnWidth);
+				hfGridViewAdapter.recalculate();
+			}
+		}
+	}
+
+	public int getColumnWidth() {
+		if (hfGridViewAdapter != null) {
+			return hfGridViewAdapter.getColumnWidth();
+		}
+		return columnWidth;
+	}
+
+	public void setNumColumns(int numColumns) {
+		if (numColumns == AUTO_FIT || numColumns > 0) {
+			this.numColumns = numColumns;
+			if (hfGridViewAdapter != null) {
+				hfGridViewAdapter.setNumColumns(numColumns);
+				hfGridViewAdapter.recalculate();
+			}
+		}
+	}
+
+	public int getNumColumns() {
+		if (hfGridViewAdapter != null) {
+			return hfGridViewAdapter.getNumColumns();
+		}
+		return this.numColumns;
+	}
+
+	public void setHorizontalSpacing(int horizontalSpacing) {
+		if (horizontalSpacing > 0) {
+			this.horizontalSpacing = horizontalSpacing;
+			if (hfGridViewAdapter != null) {
+				hfGridViewAdapter.setHorizontalSpacing(horizontalSpacing);
+				hfGridViewAdapter.recalculate();
+			}
+		}
+	}
+
+	public int getHorizontalSpacing() {
+		if (hfGridViewAdapter != null) {
+			return hfGridViewAdapter.getHorizontalSpacing();
+		}
+		return this.horizontalSpacing;
+	}
+
+	public void setVerticalSpacing(int verticalSpacing) {
+		if (verticalSpacing > 0) {
+			this.verticalSpacing = verticalSpacing;
+			if (hfGridViewAdapter != null) {
+				hfGridViewAdapter.setVerticalSpacing(verticalSpacing);
+				hfGridViewAdapter.recalculate();
+			}
+		}
+	}
+
+	public int getVerticalSpacing() {
+		if (hfGridViewAdapter != null) {
+			return hfGridViewAdapter.getVerticalSpacing();
+		}
+		return this.verticalSpacing;
+	}
+
+	// STRETCH_SPACING_UNIFORM, STRETCH_SPACING_UNIFORM_VERT_HOR (with equal vertical and horizontal spacing) are implemented only
+	public void setStretchMode(int stretchMode) {
+		if (//stretchMode == NO_STRETCH ||
+			//stretchMode == STRETCH_SPACING ||
+			//stretchMode == STRETCH_COLUMN_WIDTH ||
+			stretchMode == STRETCH_SPACING_UNIFORM ||
+			stretchMode == STRETCH_SPACING_UNIFORM_VERT_HOR) {
+
+			this.stretchMode = stretchMode;
+			if (hfGridViewAdapter != null) {
+				hfGridViewAdapter.setStretchMode(stretchMode);
+				hfGridViewAdapter.recalculate();
+			}
+
+		}
+	}
+
+	public int getStretchMode() {
+		if (hfGridViewAdapter != null) {
+			return hfGridViewAdapter.getStretchMode();
+		}
+		return this.stretchMode;
 	}
 }
